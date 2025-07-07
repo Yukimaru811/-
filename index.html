@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ホワサバ 勝率予測（兵士＆火晶ランク補正対応）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      background-color: #f9f9f9;
+    }
+    h2, h3 {
+      color: #333;
+    }
+    fieldset {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    legend {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin: 8px 0 4px;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    #result {
+      background-color: #eaf4ff;
+      border-left: 5px solid #007acc;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <h2>ホワサバ 勝率予測（兵士＆火晶ランク補正対応）</h2>
+
+  <form id="buffForm">
+    <fieldset>
+      <legend>🔢 兵士数・兵士ランク・火晶ランク</legend>
+      <label>自軍の兵士数</label>
+      <input type="number" id="myTroops" value="2000000">
+      <label>自軍兵士ランク</label>
+      <select id="myTroopTier">
+        <option value="1">T1</option><option value="2">T2</option><option value="3">T3</option>
+        <option value="4">T4</option><option value="5">T5</option><option value="6">T6</option>
+        <option value="7">T7</option><option value="8">T8</option><option value="9">T9</option>
+        <option value="10">T10</option><option value="11" selected>T11</option>
+      </select>
+
+      <label>自軍の火晶ランク</label>
+      <select id="myCrystalRank">
+        <option value="1">ランク1</option>
+        <option value="2">ランク2</option>
+        <option value="3">ランク3</option>
+        <option value="4">ランク4</option>
+        <option value="5" selected>ランク5</option>
+      </select>
+
+      <label>敵軍の兵士数</label>
+      <input type="number" id="enTroops" value="1800000">
+      <label>敵軍兵士ランク</label>
+      <select id="enTroopTier">
+        <option value="1">T1</option><option value="2">T2</option><option value="3">T3</option>
+        <option value="4">T4</option><option value="5">T5</option><option value="6">T6</option>
+        <option value="7">T7</option><option value="8">T8</option><option value="9" selected>T9</option>
+        <option value="10">T10</option><option value="11">T11</option>
+      </select>
+
+      <label>敵軍の火晶ランク</label>
+      <select id="enCrystalRank">
+        <option value="1">ランク1</option>
+        <option value="2">ランク2</option>
+        <option value="3" selected>ランク3</option>
+        <option value="4">ランク4</option>
+        <option value="5">ランク5</option>
+      </select>
+    </fieldset>
+
+     <fieldset>
+      <legend>🔺 自分のバフ（％）</legend>
+      <strong>盾兵</strong>
+      <label>攻撃力</label><input type="number" id="myInfAtk" value="200">
+      <label>防御力</label><input type="number" id="myInfDef" value="180">
+      <label>殺傷力</label><input type="number" id="myInfKill" value="100">
+      <label>HP</label><input type="number" id="myInfHP" value="150">
+
+      <strong>槍兵</strong>
+      <label>攻撃力</label><input type="number" id="myCavAtk" value="190">
+      <label>防御力</label><input type="number" id="myCavDef" value="170">
+      <label>殺傷力</label><input type="number" id="myCavKill" value="90">
+      <label>HP</label><input type="number" id="myCavHP" value="160">
+
+      <strong>弓兵</strong>
+      <label>攻撃力</label><input type="number" id="myShoAtk" value="210">
+      <label>防御力</label><input type="number" id="myShoDef" value="160">
+      <label>殺傷力</label><input type="number" id="myShoKill" value="110">
+      <label>HP</label><input type="number" id="myShoHP" value="140">
+
+      <strong>全兵種</strong>
+      <label>攻撃力</label><input type="number" id="myAllAtk" value="10">
+      <label>防御力</label><input type="number" id="myAllDef" value="10">
+      <label>殺傷力</label><input type="number" id="myAllKill" value="5">
+      <label>HP</label><input type="number" id="myAllHP" value="10">
+    </fieldset>
+
+    <fieldset>
+      <legend>🔻 敵のバフ（％）</legend>
+      <strong>盾兵</strong>
+      <label>攻撃力</label><input type="number" id="enInfAtk" value="210">
+      <label>防御力</label><input type="number" id="enInfDef" value="160">
+      <label>殺傷力</label><input type="number" id="enInfKill" value="90">
+      <label>HP</label><input type="number" id="enInfHP" value="140">
+
+      <strong>槍兵</strong>
+      <label>攻撃力</label><input type="number" id="enCavAtk" value="200">
+      <label>防御力</label><input type="number" id="enCavDef" value="160">
+      <label>殺傷力</label><input type="number" id="enCavKill" value="85">
+      <label>HP</label><input type="number" id="enCavHP" value="150">
+
+      <strong>弓兵</strong>
+      <label>攻撃力</label><input type="number" id="enShoAtk" value="200">
+      <label>防御力</label><input type="number" id="enShoDef" value="150">
+      <label>殺傷力</label><input type="number" id="enShoKill" value="95">
+      <label>HP</label><input type="number" id="enShoHP" value="130">
+
+      <strong>全兵種</strong>
+      <label>攻撃力</label><input type="number" id="enAllAtk" value="10">
+      <label>防御力</label><input type="number" id="enAllDef" value="10">
+      <label>殺傷力</label><input type="number" id="enAllKill" value="5">
+      <label>HP</label><input type="number" id="enAllHP" value="10">
+    </fieldset>
+
+    <button type="button" onclick="calculate()">勝率を計算</button>
+  </form>
+
+  <h3 id="result"></h3>
+
+  <script>
+   function getTierModifier(tier) {
+      const modifiers = { 1: 0.6, 2: 0.65, 3: 0.7, 4: 0.75, 5: 0.8, 6: 0.85, 7: 0.9, 8: 0.93, 9: 0.96, 10: 0.98, 11: 1 };
+      return modifiers[tier] || 1;
+    }
+
+    function getTierBuffBonus(tier) {
+      const bonuses = { 1: 0, 2: 2, 3: 4, 4: 6, 5: 10, 6: 13, 7: 16, 8: 18, 9: 20, 10: 22, 11: 25 };
+      return bonuses[tier] || 0;
+    }
+
+    function getCrystalBonus(rank) {
+      const bonuses = { 1: 0, 2: 5, 3: 10, 4: 15, 5: 20 }; // 全バフに％で加算
+      return bonuses[rank] || 0;
+    }
+
+    function getBuffTotal(type, attr, myTier, enTier, myCrystal, enCrystal) {
+      const myBase = parseFloat(document.getElementById(`my${type}${attr}`).value);
+      const myAll = parseFloat(document.getElementById(`myAll${attr}`).value);
+      const enBase = parseFloat(document.getElementById(`en${type}${attr}`).value);
+      const enAll = parseFloat(document.getElementById(`enAll${attr}`).value);
+
+      const myBuff = myBase + myAll + getTierBuffBonus(myTier) + getCrystalBonus(myCrystal);
+      const enBuff = enBase + enAll + getTierBuffBonus(enTier) + getCrystalBonus(enCrystal);
+
+      return { my: myBuff, en: enBuff };
+    }
+
+  function calculate() {
+  const types = ['Inf', 'Cav', 'Sho'];
+  const attrs = ['Atk', 'Def', 'Kill', 'HP'];
+  const weights = { Atk: 0.3, Def: 0.25, Kill: 0.2, HP: 0.25 };
+  let score = 0;
+
+  const myTier = parseInt(document.getElementById('myTroopTier').value);
+  const enTier = parseInt(document.getElementById('enTroopTier').value);
+  const myCrystal = parseInt(document.getElementById('myCrystalRank').value);
+  const enCrystal = parseInt(document.getElementById('enCrystalRank').value);
+
+  types.forEach(type => {
+    attrs.forEach(attr => {
+      const { my, en } = getBuffTotal(type, attr, myTier, enTier, myCrystal, enCrystal);
+      score += (my - en) * weights[attr];
+    });
+  });
+
+  const myTroops = parseFloat(document.getElementById('myTroops').value) || 1;
+  const enTroops = parseFloat(document.getElementById('enTroops').value) || 1;
+
+  const myTierMod = getTierModifier(myTier);
+  const enTierMod = getTierModifier(enTier);
+
+  const troopRatio = (myTroops * myTierMod) / (enTroops * enTierMod);
+  const troopScore = Math.max(-30, Math.min(30, (troopRatio - 1) * 100));
+
+  const totalScore = score + troopScore;
+  const winRate = 1 / (1 + Math.exp(-totalScore / 15)) * 100;
+  const roundedRate = Math.round(winRate * 100) / 100;
+
+  let verdict = '';
+  if (totalScore >= 50) verdict = '✅ ほぼ勝てる（圧倒）';
+  else if (totalScore >= 20) verdict = '👍 有利だが油断禁物';
+  else if (totalScore >= -19) verdict = '⚖️ 拮抗（戦術次第）';
+  else if (totalScore >= -49) verdict = '⚠️ やや不利（逆転可能）';
+  else verdict = '❌ かなり厳しい（回避推奨）';
+
+  document.getElementById('result').innerText =
+    `総合スコア：${totalScore.toFixed(1)}（兵力・ランク補正含む）\n予測勝率：${roundedRate}%\n${verdict}`;
+}
+
+</script>
