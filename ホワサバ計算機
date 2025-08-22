@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>集結計算機</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f7;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 40px;
+        }
+        .column {
+            flex: 1;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #0056b3;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+        }
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .hero-details {
+            border: 1px dashed #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .hero-details h4 {
+            margin-top: 0;
+            color: #0056b3;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .stat-grid > div {
+            display: flex;
+            flex-direction: column;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result-section {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #e6f7ff;
+            border: 1px solid #b3e0ff;
+            border-radius: 8px;
+            text-align: center;
+        }
+        #win-rate {
+            font-size: 4em;
+            font-weight: bold;
+            color: #d9534f;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .pet-group {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        .pet-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="column">
+        <h1>自軍</h1>
+        <div class="section">
+            <h2>兵士数</h2>
+            <div class="input-group">
+                <label for="my-total-soldiers">総兵士数</label>
+                <input type="number" id="my-total-soldiers" name="my-total-soldiers" placeholder="例: 2000000">
+            </div>
+            <div class="input-group">
+                <label>兵士の割合 (%)</label>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div>
+                        <label for="my-shield-ratio">盾兵</label>
+                        <input type="number" id="my-shield-ratio" name="my-shield-ratio" min="0" max="100" placeholder="例: 40">
+                    </div>
+                    <div>
+                        <label for="my-spear-ratio">槍兵</label>
+                        <input type="number" id="my-spear-ratio" name="my-spear-ratio" min="0" max="100" placeholder="例: 30">
+                    </div>
+                    <div>
+                        <label for="my-bow-ratio">弓兵</label>
+                        <input type="number" id="my-bow-ratio" name="my-bow-ratio" min="0" max="100" placeholder="例: 30">
+                    </div>
+                </div>
+                <p class="info-text">合計が100%になるように入力してください。</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>兵士のランク</h2>
+            <div class="input-group">
+                <label for="my-shield-rank">盾兵</label>
+                <select id="my-shield-rank" name="my-shield-rank">
+                    <option value="fc1">FC1: 攻撃力11, 防御力14, HP16, 殺傷力10</option>
+                    <option value="fc2">FC2: 攻撃力12, 防御力16, HP17, 殺傷力11</option>
+                    <option value="fc3">FC3: 攻撃力13, 防御力17, HP18, 殺傷力12</option>
+                    <option value="fc4">FC4: 攻撃力13, 防御力18, HP19, 殺傷力13</option>
+                    <option value="fc5">FC5: 攻撃力14, 防御力20, HP20, 殺傷力13</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="my-spear-rank">槍兵</label>
+                <select id="my-spear-rank" name="my-spear-rank">
+                    <option value="fc1">FC1: 攻撃力14, 防御力12, HP11, 殺傷力15</option>
+                    <option value="fc2">FC2: 攻撃力16, 防御力13, HP12, 殺傷力16</option>
+                    <option value="fc3">FC3: 攻撃力17, 防御力14, HP13, 殺傷力17</option>
+                    <option value="fc4">FC4: 攻撃力18, 防御力14, HP13, 殺傷力18</option>
+                    <option value="fc5">FC5: 攻撃力20, 防御力15, HP14, 殺傷力19</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="my-bow-rank">弓兵</label>
+                <select id="my-bow-rank" name="my-bow-rank">
+                    <option value="fc1">FC1: 攻撃力15, 防御力11, HP11, 殺傷力16</option>
+                    <option value="fc2">FC2: 攻撃力17, 防御力12, HP12, 殺傷力17</option>
+                    <option value="fc3">FC3: 攻撃力18, 防御力13, HP13, 殺傷力18</option>
+                    <option value="fc4">FC4: 攻撃力19, 防御力14, HP13, 殺傷力19</option>
+                    <option value="fc5">FC5: 攻撃力21, 防御力14, HP13, 殺傷力20</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>追加ステータス (%)</h2>
+            <div class="stat-group">
+                <h4>盾兵</h4>
+                <div class="stat-grid">
+                    <div><label for="my-shield-atk">攻撃力</label><input type="number" id="my-shield-atk" placeholder="例: 150"></div>
+                    <div><label for="my-shield-def">防御力</label><input type="number" id="my-shield-def" placeholder="例: 150"></div>
+                    <div><label for="my-shield-kill">殺傷力</label><input type="number" id="my-shield-kill" placeholder="例: 150"></div>
+                    <div><label for="my-shield-hp">HP</label><input type="number" id="my-shield-hp" placeholder="例: 150"></div>
+                </div>
+            </div>
+            <div class="stat-group" style="margin-top: 15px;">
+                <h4>槍兵</h4>
+                <div class="stat-grid">
+                    <div><label for="my-spear-atk">攻撃力</label><input type="number" id="my-spear-atk" placeholder="例: 150"></div>
+                    <div><label for="my-spear-def">防御力</label><input type="number" id="my-spear-def" placeholder="例: 150"></div>
+                    <div><label for="my-spear-kill">殺傷力</label><input type="number" id="my-spear-kill" placeholder="例: 150"></div>
+                    <div><label for="my-spear-hp">HP</label><input type="number" id="my-spear-hp" placeholder="例: 150"></div>
+                </div>
+            </div>
+            <div class="stat-group" style="margin-top: 15px;">
+                <h4>弓兵</h4>
+                <div class="stat-grid">
+                    <div><label for="my-bow-atk">攻撃力</label><input type="number" id="my-bow-atk" placeholder="例: 150"></div>
+                    <div><label for="my-bow-def">防御力</label><input type="number" id="my-bow-def" placeholder="例: 150"></div>
+                    <div><label for="my-bow-kill">殺傷力</label><input type="number" id="my-bow-kill" placeholder="例: 150"></div>
+                    <div><label for="my-bow-hp">HP</label><input type="number" id="my-bow-hp" placeholder="例: 150"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>英雄バフ</h2>
+            <div class="input-group">
+                <label for="my-leader-hero">集結主</label>
+                <select id="my-leader-hero" name="my-leader-hero">
+                    <option value="alonzo">アロンゾ</option>
+                    <option value="gwen">グエン</option>
+                </select>
+            </div>
+            <div class="hero-details">
+                <div class="input-group">
+                    <label for="my-leader-weapon-buff">専用武器バフ（殺傷力 %）</label>
+                    <input type="number" id="my-leader-weapon-buff" name="my-leader-weapon-buff" placeholder="手入力 例: 15">
+                </div>
+            </div>
+            <div class="input-group" style="margin-top: 20px;">
+                <label for="my-participant-hero">集結参加者</label>
+                <select id="my-participant-hero" name="my-participant-hero">
+                    <option value="none">なし</option>
+                    <option value="jessie">ジェシー: ダメージ25%上昇</option>
+                    <option value="patrick">パトリック: HP25%上昇</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>ペットバフ</h2>
+            <div class="pet-group">
+                <div class="pet-item">
+                    <input type="checkbox" id="my-lion-check">
+                    <label for="my-lion-check">ホラアナライオン</label>
+                    <select id="my-lion-level" disabled>
+                        <option value="0">レベル選択</option>
+                        <option value="5">レベル5: 攻撃力5%上昇</option>
+                        <option value="6">レベル6: 攻撃力6%上昇</option>
+                        <option value="7">レベル7: 攻撃力7%上昇</option>
+                        <option value="8">レベル8: 攻撃力8%上昇</option>
+                        <option value="9">レベル9: 攻撃力9%上昇</option>
+                        <option value="10">レベル10: 攻撃力10%上昇</option>
+                    </select>
+                </div>
+                <div class="pet-item">
+                    <input type="checkbox" id="my-tiger-check">
+                    <label for="my-tiger-check">サーベルタイガー</label>
+                    <select id="my-tiger-level" disabled>
+                        <option value="0">レベル選択</option>
+                        <option value="5">レベル5: 殺傷力5%上昇</option>
+                        <option value="6">レベル6: 殺傷力6%上昇</option>
+                        <option value="7">レベル7: 殺傷力7%上昇</option>
+                        <option value="8">レベル8: 殺傷力8%上昇</option>
+                        <option value="9">レベル9: 殺傷力9%上昇</option>
+                        <option value="10">レベル10: 殺傷力10%上昇</option>
+                    </select>
+                </div>
+                <div class="pet-item">
+                    <input type="checkbox" id="my-titan-check">
+                    <label for="my-titan-check">タイタン</label>
+                    <select id="my-titan-level" disabled>
+                        <option value="0">レベル選択</option>
+                        <option value="5">レベル5: 敵軍HP5%減少</option>
+                        <option value="6">レベル6: 敵軍HP6%減少</option>
+                        <option value="7">レベル7: 敵軍HP7%減少</option>
+                        <option value="8">レベル8: 敵軍HP8%減少</option>
+                        <option value="9">レベル9: 敵軍HP9%減少</option>
+                        <option value="10">レベル10: 敵軍HP10%減少</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="column">
+        <h1>敵軍</h1>
+        <div class="section">
+            <h2>兵士数</h2>
+            <div class="input-group">
+                <label for="enemy-total-soldiers">総兵士数</label>
+                <input type="number" id="enemy-total-soldiers" name="enemy-total-soldiers" placeholder="例: 2000000">
+            </div>
+            <div class="input-group">
+                <label>兵士の割合 (%)</label>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div><label for="enemy-shield-ratio">盾兵</label><input type="number" id="enemy-shield-ratio" name="enemy-shield-ratio" min="0" max="100" placeholder="例: 40"></div>
+                    <div><label for="enemy-spear-ratio">槍兵</label><input type="number" id="enemy-spear-ratio" name="enemy-spear-ratio" min="0" max="100" placeholder="例: 30"></div>
+                    <div><label for="enemy-bow-ratio">弓兵</label><input type="number" id="enemy-bow-ratio" name="enemy-bow-ratio" min="0" max="100" placeholder="例: 30"></div>
+                </div>
+                <p class="info-text">合計が100%になるように入力してください。</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>兵士のランク</h2>
+            <div class="input-group">
+                <label for="enemy-shield-rank">盾兵</label>
+                <select id="enemy-shield-rank" name="enemy-shield-rank">
+                    <option value="fc1">FC1: 攻撃力11, 防御力14, HP16, 殺傷力10</option>
+                    <option value="fc2">FC2: 攻撃力12, 防御力16, HP17, 殺傷力11</option>
+                    <option value="fc3">FC3: 攻撃力13, 防御力17, HP18, 殺傷力12</option>
+                    <option value="fc4">FC4: 攻撃力13, 防御力18, HP19, 殺傷力13</option>
+                    <option value="fc5">FC5: 攻撃力14, 防御力20, HP20, 殺傷力13</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="enemy-spear-rank">槍兵</label>
+                <select id="enemy-spear-rank" name="enemy-spear-rank">
+                    <option value="fc1">FC1: 攻撃力14, 防御力12, HP11, 殺傷力15</option>
+                    <option value="fc2">FC2: 攻撃力16, 防御力13, HP12, 殺傷力16</option>
+                    <option value="fc3">FC3: 攻撃力17, 防御力14, HP13, 殺傷力17</option>
+                    <option value="fc4">FC4: 攻撃力18, 防御力14, HP13, 殺傷力18</option>
+                    <option value="fc5">FC5: 攻撃力20, 防御力15, HP14, 殺傷力19</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="enemy-bow-rank">弓兵</label>
+                <select id="enemy-bow-rank" name="enemy-bow-rank">
+                    <option value="fc1">FC1: 攻撃力15, 防御力11, HP11, 殺傷力16</option>
+                    <option value="fc2">FC2: 攻撃力17, 防御力12, HP12, 殺傷力17</option>
+                    <option value="fc3">FC3: 攻撃力18, 防御力13, HP13, 殺傷力18</option>
+                    <option value="fc4">FC4: 攻撃力19, 防御力14, HP13, 殺傷力19</option>
+                    <option value="fc5">FC5: 攻撃力21, 防御力14, HP13, 殺傷力20</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>追加ステータス (%)</h2>
+            <div class="stat-group">
+                <h4>盾兵</h4>
+                <div class="stat-grid">
+                    <div><label for="enemy-shield-atk">攻撃力</label><input type="number" id="enemy-shield-atk" placeholder="例: 150"></div>
+                    <div><label for="enemy-shield-def">防御力</label><input type="number" id="enemy-shield-def" placeholder="例: 150"></div>
+                    <div><label for="enemy-shield-kill">殺傷力</label><input type="number" id="enemy-shield-kill" placeholder="例: 150"></div>
+                    <div><label for="enemy-shield-hp">HP</label><input type="number" id="enemy-shield-hp" placeholder="例: 150"></div>
+                </div>
+            </div>
+            <div class="stat-group" style="margin-top: 15px;">
+                <h4>槍兵</h4>
+                <div class="stat-grid">
+                    <div><label for="enemy-spear-atk">攻撃力</label><input type="number" id="enemy-spear-atk" placeholder="例: 150"></div>
+                    <div><label for="enemy-spear-def">防御力</label><input type="number" id="enemy-spear-def" placeholder="例: 150"></div>
+                    <div><label for="enemy-spear-kill">殺傷力</label><input type="number" id="enemy-spear-kill" placeholder="例: 150"></div>
+                    <div><label for="enemy-spear-hp">HP</label><input type="number" id="enemy-spear-hp" placeholder="例: 150"></div>
+                </div>
+            </div>
+            <div class="stat-group" style="margin-top: 15px;">
+                <h4>弓兵</h4>
+                <div class="stat-grid">
+                    <div><label for="enemy-bow-atk">攻撃力</label><input type="number" id="enemy-bow-atk" placeholder="例: 150"></div>
+                    <div><label for="enemy-bow-def">防御力</label><input type="number" id="enemy-bow-def" placeholder="例: 150"></div>
+                    <div><label for="enemy-bow-kill">殺傷力</label><input type="number" id="enemy-bow-kill" placeholder="例: 150"></div>
+                    <div><label for="enemy-bow-hp">HP</label><input type="number" id="enemy-bow-hp" placeholder="例: 150"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>英雄バフ</h2>
+            <div class="input-group">
+                <label for="enemy-leader-hero">集結主</label>
+                <select id="enemy-leader-hero" name="enemy-leader-hero">
+                    <option value="alonzo">アロンゾ</option>
+                    <option value="gwen">グエン</option>
+                </select>
+            </div>
+            <div class="hero-details">
+                <div class="input-group">
+                    <label for="enemy-leader-weapon-buff">専用武器バフ（殺傷力 %）</label>
+                    <input type="number" id="enemy-leader-weapon-buff" name="enemy-leader-weapon-buff" placeholder="手入力 例: 15">
+                </div>
+            </div>
+            <div class="input-group" style="margin-top: 20px;">
+                <label for="enemy-participant-hero">集結参加者</label>
+                <select id="enemy-participant-hero" name="enemy-participant-hero">
+                    <option value="none">なし</option>
+                    <option value="jessie">ジェシー: ダメージ25%上昇</option>
+                    <option value="patrick">パトリック: HP25%上昇</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>ペットバフ</h2>
+            <div class="pet-group">
+                <div class="pet-item">
+                    <input type="checkbox" id="enemy-lion-check">
+                    <label for="enemy-lion-check">ホラアナライオン</label>
+                    <select id="enemy-lion-level" disabled>
+                        <option value="0">レベル選択</option>
+                        <option value="5">レベル5: 攻撃力5%上昇</option>
+                        <option value="6">レベル6: 攻撃力6%上昇</option>
+                        <option value="7">レベル7: 攻撃力7%上昇</option>
+                        <option value="8">レベル8: 攻撃力8%上昇</option>
+                        <option value="9">レベル9: 攻撃力9%上昇</option>
+                        <option value="10">レベル10: 攻撃力10%上昇</option>
+                    </select>
+                </div>
+                <div class="pet-item">
+                    <input type="checkbox" id="enemy-tiger-check">
+                    <label for="enemy-tiger-check">サーベルタイガー</label>
+                    <select id="enemy-tiger-level" disabled>
+                        <option value="0">レベル選択</option>
+                        <option value="5">レベル5: 殺傷力5%上昇</option>
+                        <option value="6">レベル6: 殺傷力6%上昇</option>
+                        <option value="7">レベル7: 殺傷力7%上昇</option>
+                        <option value="8">レベル8: 殺傷力8%上昇</option>
+                        <option value="9">レベル9: 殺傷力9%上昇</option>
+                        <option value="10">レベル10: 殺傷力10%上昇</option>
+                    </select>
+                </div>
+                <div class="pet-item">
+                    <input type="checkbox" id="enemy-titan-check">
+                    <label for="enemy-titan-check">タイタン</label>
+                    <select id="enemy-titan-level" disabled>
+                        <option value="0">レベル選択</option>
+                        <option value="5">レベル5: 敵軍HP5%減少</option>
+                        <option value="6">レベル6: 敵軍HP6%減少</option>
+                        <option value="7">レベル7: 敵軍HP7%減少</option>
+                        <option value="8">レベル8: 敵軍HP8%減少</option>
+                        <option value="9">レベル9: 敵軍HP9%減少</option>
+                        <option value="10">レベル10: 敵軍HP10%減少</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+    <button type="button" onclick="calculate()">計算開始</button>
+</div>
+
+<div id="result-section" style="display: none;">
+    <h2>勝率</h2>
+    <div id="win-rate"></div>
+</div>
+
+<script>
+    // ペットのチェックボックスとプルダウンの連動
+    const myLionCheck = document.getElementById('my-lion-check');
+    const myLionLevel = document.getElementById('my-lion-level');
+    myLionCheck.addEventListener('change', () => myLionLevel.disabled = !myLionCheck.checked);
+    
+    const myTigerCheck = document.getElementById('my-tiger-check');
+    const myTigerLevel = document.getElementById('my-tiger-level');
+    myTigerCheck.addEventListener('change', () => myTigerLevel.disabled = !myTigerCheck.checked);
+
+    const myTitanCheck = document.getElementById('my-titan-check');
+    const myTitanLevel = document.getElementById('my-titan-level');
+    myTitanCheck.addEventListener('change', () => myTitanLevel.disabled = !myTitanCheck.checked);
+
+    const enemyLionCheck = document.getElementById('enemy-lion-check');
+    const enemyLionLevel = document.getElementById('enemy-lion-level');
+    enemyLionCheck.addEventListener('change', () => enemyLionLevel.disabled = !enemyLionCheck.checked);
+    
+    const enemyTigerCheck = document.getElementById('enemy-tiger-check');
+    const enemyTigerLevel = document.getElementById('enemy-tiger-level');
+    enemyTigerCheck.addEventListener('change', () => enemyTigerLevel.disabled = !enemyTigerCheck.checked);
+
+    const enemyTitanCheck = document.getElementById('enemy-titan-check');
+    const enemyTitanLevel = document.getElementById('enemy-titan-level');
+    enemyTitanCheck.addEventListener('change', () => enemyTitanLevel.disabled = !enemyTitanCheck.checked);
+
+    function calculate() {
+        const my = {
+            totalSoldiers: parseInt(document.getElementById('my-total-soldiers').value) || 0,
+            shieldRatio: parseFloat(document.getElementById('my-shield-ratio').value) / 100 || 0,
+            spearRatio: parseFloat(document.getElementById('my-spear-ratio').value) / 100 || 0,
+            bowRatio: parseFloat(document.getElementById('my-bow-ratio').value) / 100 || 0,
+            shieldRank: document.getElementById('my-shield-rank').value,
+            spearRank: document.getElementById('my-spear-rank').value,
+            bowRank: document.getElementById('my-bow-rank').value,
+            leaderHero: document.getElementById('my-leader-hero').value,
+            leaderWeaponBuff: parseFloat(document.getElementById('my-leader-weapon-buff').value) / 100 || 0,
+            participantHero: document.getElementById('my-participant-hero').value,
+            shieldAtk: parseFloat(document.getElementById('my-shield-atk').value) / 100 || 0,
+            shieldDef: parseFloat(document.getElementById('my-shield-def').value) / 100 || 0,
+            shieldKill: parseFloat(document.getElementById('my-shield-kill').value) / 100 || 0,
+            shieldHp: parseFloat(document.getElementById('my-shield-hp').value) / 100 || 0,
+            spearAtk: parseFloat(document.getElementById('my-spear-atk').value) / 100 || 0,
+            spearDef: parseFloat(document.getElementById('my-spear-def').value) / 100 || 0,
+            spearKill: parseFloat(document.getElementById('my-spear-kill').value) / 100 || 0,
+            spearHp: parseFloat(document.getElementById('my-spear-hp').value) / 100 || 0,
+            bowAtk: parseFloat(document.getElementById('my-bow-atk').value) / 100 || 0,
+            bowDef: parseFloat(document.getElementById('my-bow-def').value) / 100 || 0,
+            bowKill: parseFloat(document.getElementById('my-bow-kill').value) / 100 || 0,
+            bowHp: parseFloat(document.getElementById('my-bow-hp').value) / 100 || 0,
+            // ペット
+            lion: myLionCheck.checked ? parseInt(myLionLevel.value) / 100 : 0,
+            tiger: myTigerCheck.checked ? parseInt(myTigerLevel.value) / 100 : 0,
+            titan: myTitanCheck.checked ? parseInt(myTitanLevel.value) / 100 : 0
+        };
+
+        const enemy = {
+            totalSoldiers: parseInt(document.getElementById('enemy-total-soldiers').value) || 0,
+            shieldRatio: parseFloat(document.getElementById('enemy-shield-ratio').value) / 100 || 0,
+            spearRatio: parseFloat(document.getElementById('enemy-spear-ratio').value) / 100 || 0,
+            bowRatio: parseFloat(document.getElementById('enemy-bow-ratio').value) / 100 || 0,
+            shieldRank: document.getElementById('enemy-shield-rank').value,
+            spearRank: document.getElementById('enemy-spear-rank').value,
+            bowRank: document.getElementById('enemy-bow-rank').value,
+            leaderHero: document.getElementById('enemy-leader-hero').value,
+            leaderWeaponBuff: parseFloat(document.getElementById('enemy-leader-weapon-buff').value) / 100 || 0,
+            participantHero: document.getElementById('enemy-participant-hero').value,
+            shieldAtk: parseFloat(document.getElementById('enemy-shield-atk').value) / 100 || 0,
+            shieldDef: parseFloat(document.getElementById('enemy-shield-def').value) / 100 || 0,
+            shieldKill: parseFloat(document.getElementById('enemy-shield-kill').value) / 100 || 0,
+            shieldHp: parseFloat(document.getElementById('enemy-shield-hp').value) / 100 || 0,
+            spearAtk: parseFloat(document.getElementById('enemy-spear-atk').value) / 100 || 0,
+            spearDef: parseFloat(document.getElementById('enemy-spear-def').value) / 100 || 0,
+            spearKill: parseFloat(document.getElementById('enemy-spear-kill').value) / 100 || 0,
+            spearHp: parseFloat(document.getElementById('enemy-spear-hp').value) / 100 || 0,
+            bowAtk: parseFloat(document.getElementById('enemy-bow-atk').value) / 100 || 0,
+            bowDef: parseFloat(document.getElementById('enemy-bow-def').value) / 100 || 0,
+            bowKill: parseFloat(document.getElementById('enemy-bow-kill').value) / 100 || 0,
+            bowHp: parseFloat(document.getElementById('enemy-bow-hp').value) / 100 || 0,
+            // ペット
+            lion: enemyLionCheck.checked ? parseInt(enemyLionLevel.value) / 100 : 0,
+            tiger: enemyTigerCheck.checked ? parseInt(enemyTigerLevel.value) / 100 : 0,
+            titan: enemyTitanCheck.checked ? parseInt(enemyTitanLevel.value) / 100 : 0
+        };
+
+        const soldierData = {
+            shield: {
+                fc1: { atk: 11, def: 14, hp: 16, kill: 10 },
+                fc2: { atk: 12, def: 16, hp: 17, kill: 11 },
+                fc3: { atk: 13, def: 17, hp: 18, kill: 12 },
+                fc4: { atk: 13, def: 18, hp: 19, kill: 13 },
+                fc5: { atk: 14, def: 20, hp: 20, kill: 13 }
+            },
+            spear: {
+                fc1: { atk: 14, def: 12, hp: 11, kill: 15 },
+                fc2: { atk: 16, def: 13, hp: 12, kill: 16 },
+                fc3: { atk: 17, def: 14, hp: 13, kill: 17 },
+                fc4: { atk: 18, def: 14, hp: 13, kill: 18 },
+                fc5: { atk: 20, def: 15, hp: 14, kill: 19 }
+            },
+            bow: {
+                fc1: { atk: 15, def: 11, hp: 11, kill: 16 },
+                fc2: { atk: 17, def: 12, hp: 12, kill: 17 },
+                fc3: { atk: 18, def: 13, hp: 13, kill: 18 },
+                fc4: { atk: 19, def: 14, hp: 13, kill: 19 },
+                fc5: { atk: 21, def: 14, hp: 13, kill: 20 }
+            }
+        };
+
+        function calculateStats(side) {
+            let totalAttack = 0;
+            let totalDefense = 0;
+            let totalHP = 0;
+            let totalKill = 0;
+
+            const soldiers = {
+                shield: side.totalSoldiers * side.shieldRatio,
+                spear: side.totalSoldiers * side.spearRatio,
+                bow: side.totalSoldiers * side.bowRatio
+            };
+
+            const ranks = {
+                shield: soldierData.shield[side.shieldRank],
+                spear: soldierData.spear[side.spearRank],
+                bow: soldierData.bow[side.bowRank]
+            };
+            
+            // 兵士種別ごとの追加ステータスを適用
+            totalAttack += (soldiers.shield * ranks.shield.atk) * (1 + side.shieldAtk);
+            totalDefense += (soldiers.shield * ranks.shield.def) * (1 + side.shieldDef);
+            totalHP += (soldiers.shield * ranks.shield.hp) * (1 + side.shieldHp);
+            totalKill += (soldiers.shield * ranks.shield.kill) * (1 + side.shieldKill);
+
+            totalAttack += (soldiers.spear * ranks.spear.atk) * (1 + side.spearAtk);
+            totalDefense += (soldiers.spear * ranks.spear.def) * (1 + side.spearDef);
+            totalHP += (soldiers.spear * ranks.spear.hp) * (1 + side.spearHp);
+            totalKill += (soldiers.spear * ranks.spear.kill) * (1 + side.spearKill);
+
+            totalAttack += (soldiers.bow * ranks.bow.atk) * (1 + side.bowAtk);
+            totalDefense += (soldiers.bow * ranks.bow.def) * (1 + side.bowDef);
+            totalHP += (soldiers.bow * ranks.bow.hp) * (1 + side.bowHp);
+            totalKill += (soldiers.bow * ranks.bow.kill) * (1 + side.bowKill);
+            
+            // 英雄バフ適用
+            if (side.leaderHero === 'gwen') {
+                totalAttack *= 1.25; 
+            }
+            if (side.leaderWeaponBuff > 0) {
+                 totalKill *= (1 + side.leaderWeaponBuff);
+            }
+            if (side.participantHero === 'jessie') {
+                totalAttack *= 1.25; 
+            }
+            if (side.participantHero === 'patrick') {
+                totalHP *= 1.25; 
+            }
+
+            // ペットバフ適用
+            if (side.lion > 0) {
+                totalAttack *= (1 + side.lion);
+            }
+            if (side.tiger > 0) {
+                totalKill *= (1 + side.tiger);
+            }
+            
+            return { totalAttack, totalHP, totalKill, totalDefense };
+        }
+
+        const myStats = calculateStats(my);
+        const enemyStats = calculateStats(enemy);
+
+        // タイタンのHP減少バフを適用
+        if (my.titan > 0) {
+            enemyStats.totalHP *= (1 - my.titan);
+        }
+        if (enemy.titan > 0) {
+            myStats.totalHP *= (1 - enemy.titan);
+        }
+
+        let winRate = 50;
+
+        const myPower = (myStats.totalAttack * myStats.totalKill) / (enemyStats.totalHP);
+        const enemyPower = (enemyStats.totalAttack * enemyStats.totalKill) / (myStats.totalHP);
+        
+        if (myPower > 0 && enemyPower > 0) {
+            winRate = (myPower / (myPower + enemyPower)) * 100;
+        } else if (myPower > 0 && enemyPower <= 0) {
+            winRate = 100;
+        } else if (myPower <= 0 && enemyPower > 0) {
+            winRate = 0;
+        }
+
+        const winRateElement = document.getElementById('win-rate');
+        const resultSection = document.getElementById('result-section');
+        winRateElement.textContent = `${winRate.toFixed(2)}%`;
+        resultSection.style.display = 'block';
+
+        if (winRate > 50) {
+            winRateElement.style.color = '#28a745'; 
+        } else if (winRate < 50) {
+            winRateElement.style.color = '#d9534f'; 
+        } else {
+            winRateElement.style.color = '#f0ad4e'; 
+        }
+    }
+</script>
+
+</body>
+</html>
